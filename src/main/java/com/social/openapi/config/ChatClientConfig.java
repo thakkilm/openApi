@@ -1,6 +1,9 @@
 package com.social.openapi.config;
 
+import com.social.openapi.advisors.TokenUsageAuditAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,7 +12,13 @@ public class ChatClientConfig {
 
     @Bean
     public ChatClient chatClient(ChatClient.Builder chatClientBuilder) {
-        return chatClientBuilder.defaultSystem("""
+        var options=OpenAiChatOptions.builder().model("gpt-5.4-mini").temperature(0.8)
+                .maxCompletionTokens(100);
+        return chatClientBuilder
+                .defaultOptions(options)
+                .defaultAdvisors(new SimpleLoggerAdvisor())
+                .defaultAdvisors( new TokenUsageAuditAdvisor()).
+                defaultSystem("""
                 You are an internal HR assistant. Your role is to help\\s
                                               employees with questions related to HR policies, such as\\s
                                               leave policies, working hours, benefits, and code of conduct.

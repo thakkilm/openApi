@@ -1,5 +1,6 @@
 package com.social.openapi.controller;
 
+import com.social.openapi.advisors.TokenUsageAuditAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,9 @@ public class OpenAiController {
 
     @GetMapping("/chat")
     public String openAiChat(@RequestParam("message") String message){
-        return chatClient.prompt().user(message).
+        return chatClient.prompt()
+//                advisors(new TokenUsageAuditAdvisor())
+                .user(message).
                 call().content();
     }
 }
